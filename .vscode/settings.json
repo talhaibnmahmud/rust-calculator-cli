@@ -1,0 +1,16 @@
+{
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "always",
+        "source.fixAll.eslint": "always"
+    },
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.suggestSelection": "first",
+    "files.autoSave": "onFocusChange",
+    "git.branchProtection": [
+        "main",
+        "master"
+    ],
+    "git.enableCommitSigning": true,
+    "git.enableSmartCommit": false,
+}
