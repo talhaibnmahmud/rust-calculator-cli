@@ -1,20 +1,13 @@
 use std::env::{args, Args};
 
 fn operate(operator: char, a: f64, b: f64) -> f64 {
-    if operator == '/' {
-        return a / b;
-    };
-    if operator == '*' {
-        return a * b;
+    match operator {
+        '/' => return a / b,
+        '*' => return a * b,
+        '+' => return a + b,
+        '-' => return a - b,
+        _ => return 0.0,
     }
-    if operator == '+' {
-        return a + b;
-    }
-    if operator == '-' {
-        return a - b;
-    }
-
-    return 0.0;
 }
 
 fn outout(a: f64, o: char, b: f64, r: f64) -> String {
