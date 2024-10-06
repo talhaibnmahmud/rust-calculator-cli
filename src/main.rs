@@ -3,10 +3,10 @@ use std::env::{args, Args};
 fn operate(operator: char, a: f64, b: f64) -> f64 {
     match operator {
         '/' => return a / b,
-        '*' => return a * b,
+        '*' | 'x' | 'X' => return a * b,
         '+' => return a + b,
         '-' => return a - b,
-        _ => return 0.0,
+        _ => panic!("Invalid operator!"),
     }
 }
 
