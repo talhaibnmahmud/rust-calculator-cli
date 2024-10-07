@@ -1,4 +1,3 @@
-#[allow(dead_code)]
 fn operate(operator: char, a: f64, b: f64) -> f64 {
     match operator {
         '/' => a / b,
@@ -9,7 +8,6 @@ fn operate(operator: char, a: f64, b: f64) -> f64 {
     }
 }
 
-#[allow(dead_code)]
 fn outout(a: f64, o: char, b: f64, r: f64) -> String {
     format!("{} {} {} = {}", a, o, b, r)
 }
