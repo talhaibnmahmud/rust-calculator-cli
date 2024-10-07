@@ -7,6 +7,14 @@ mod calculator;
 enum ImageDataErrors {
     DifferentImageFormats,
     BufferTooSmall,
+    #[allow(dead_code)]
+    UnableToReadFromPath(std::io::Error),
+    #[allow(dead_code)]
+    UnableToFormatImage(String),
+    #[allow(dead_code)]
+    UnableToDecodeImage(image::ImageError),
+    #[allow(dead_code)]
+    UnableToSaveImage(image::ImageError),
 }
 
 struct FloatingImage {
@@ -42,12 +50,22 @@ impl FloatingImage {
     }
 }
 
-fn find_image_from_path(path: String) -> (image::DynamicImage, image::ImageFormat) {
-    let image_reader = image::ImageReader::open(path).unwrap();
-    let image_format = image_reader.format().unwrap();
-    let image = image_reader.decode().unwrap();
-
-    (image, image_format)
+fn find_image_from_path(
+    path: String,
+) -> Result<(image::DynamicImage, image::ImageFormat), ImageDataErrors> {
+    match image::ImageReader::open(&path) {
+        Ok(image_reader) => {
+            if let Some(image_format) = image_reader.format() {
+                match image_reader.decode() {
+                    Ok(image) => Ok((image, image_format)),
+                    Err(e) => Err(ImageDataErrors::UnableToDecodeImage(e)),
+                }
+            } else {
+                Err(ImageDataErrors::UnableToFormatImage(path))
+            }
+        }
+        Err(e) => Err(ImageDataErrors::UnableToReadFromPath(e)),
+    }
 }
 
 fn get_smallest_dimension(dim_1: (u32, u32), dim_2: (u32, u32)) -> (u32, u32) {
@@ -130,8 +148,8 @@ fn main() -> Result<(), ImageDataErrors> {
     let args = args::Args::new();
     println!("Args: {:#?}", args);
 
-    let (image_1, image_format_1) = find_image_from_path(args.image_1);
-    let (image_2, image_format_2) = find_image_from_path(args.image_2);
+    let (image_1, image_format_1) = find_image_from_path(args.image_1)?;
+    let (image_2, image_format_2) = find_image_from_path(args.image_2)?;
     if image_format_1 != image_format_2 {
         return Err(ImageDataErrors::DifferentImageFormats);
     };
@@ -140,15 +158,16 @@ fn main() -> Result<(), ImageDataErrors> {
     let mut output = FloatingImage::new(image_1.width(), image_1.height(), args.output);
     let combined_data = combine_images(image_1, image_2);
     output.set_data(combined_data)?;
-    image::save_buffer_with_format(
+    if let Err(e) = image::save_buffer_with_format(
         output.name,
         &output.data,
         output.width,
         output.height,
         image::ColorType::Rgba8,
         image_format_1,
-    )
-    .unwrap();
+    ) {
+        return Err(ImageDataErrors::UnableToSaveImage(e));
+    }
 
     Ok(())
 }
