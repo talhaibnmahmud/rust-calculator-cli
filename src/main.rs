@@ -2,16 +2,16 @@ use std::env::{args, Args};
 
 fn operate(operator: char, a: f64, b: f64) -> f64 {
     match operator {
-        '/' => return a / b,
-        '*' | 'x' | 'X' => return a * b,
-        '+' => return a + b,
-        '-' => return a - b,
+        '/' => a / b,
+        '*' | 'x' | 'X' => a * b,
+        '+' => a + b,
+        '-' => a - b,
         _ => panic!("Invalid operator!"),
     }
 }
 
 fn outout(a: f64, o: char, b: f64, r: f64) -> String {
-    return format!("{} {} {} = {}", a, o, b, r);
+    format!("{} {} {} = {}", a, o, b, r)
 }
 
 fn main() {
@@ -23,13 +23,13 @@ fn main() {
         None => panic!("Didn't get the first arguments"),
     }
 
-    let operator = args.nth(0);
+    let operator = args.next();
     match operator {
         Some(ref inner) => println!("Got operator: {}", inner),
         None => panic!("Didn't get the operator"),
     }
 
-    let second = args.nth(0);
+    let second = args.next();
     match second {
         Some(ref inner) => println!("Got second argument: {}", inner),
         None => panic!("Didn't get the second arguments"),
